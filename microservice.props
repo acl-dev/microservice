@@ -5,7 +5,7 @@
   <PropertyGroup />
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>include;$(solutionDir)\lib_acl_cpp\include;$(solutionDir)\lib_acl\include;$(solutionDir)\lib_protocol\include;$(solutionDir)\app\microservice\http_rpc\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(solutionDir)\lib_acl_cpp\include;$(solutionDir)\lib_acl\include;$(solutionDir)\lib_protocol\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
