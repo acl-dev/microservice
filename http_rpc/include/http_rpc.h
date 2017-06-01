@@ -1,0 +1,19 @@
+#pragma once
+
+#include <vector>
+#include <exception>
+#include "acl_cpp/lib_acl.hpp"
+#include "lib_acl.h"
+#include "nameserver_proto.h"
+#include "nameserver_proto_gson.h"
+#include "http_rpc_config.h"
+#include "service_handle.hpp"
+#include "json_service_handle.hpp"
+#include "service_handles.hpp"
+#include "json_service_handles.hpp"
+#include "http_rpc_servlet.h"
+#include "http_rpc_client.h"
+#include "access_list.h"
+#include "service_register.h"
+#include "service_base.h"
+#include "http_rpc_server.h"
