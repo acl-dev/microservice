@@ -1,7 +1,6 @@
 # microservice
-## 基于acl 开发的微服务框架
+## 基于acl框架 设计实现的轻量级微服务框架
 
-## acl-micorservice 是基于acl框架设计的一套微服务框架。
 
 ## http_rpc rpc框架
 ## publisher 二进制包 发布服务。
