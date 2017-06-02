@@ -119,6 +119,7 @@
     <ClInclude Include="include\nameserver_proto.h" />
     <ClInclude Include="include\http_rpc_server.h" />
     <ClInclude Include="include\nameserver_proto_gson.h" />
+    <ClInclude Include="include\protobuf_service_handle.hpp" />
     <ClInclude Include="include\protobuf_service_handles.hpp" />
     <ClInclude Include="include\service_handle.hpp" />
     <ClInclude Include="include\service_handles.hpp" />

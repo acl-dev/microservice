@@ -57,6 +57,12 @@
     <ClInclude Include="include\json_service_handles.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="include\protobuf_service_handles.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\protobuf_service_handle.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\http_rpc.cpp">

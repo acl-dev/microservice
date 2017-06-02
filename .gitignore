@@ -33,3 +33,4 @@
 x64/
 Debug/
 .vs/
+*.VC.db
