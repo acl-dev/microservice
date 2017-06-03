@@ -115,13 +115,13 @@ namespace acl
 			std::string data = req.SerializeAsString();
 
 			status_t status = invoke_http_req(service_name,
-				"application/json",
+				"application/x-protobuf",
 				string(data.c_str(), data.size()),
 				buffer);
 			if (!status)
 				return status;
 
-			if (resp.ParseFromArray(buffer.c_str(), buffer.size()))
+			if (resp.ParseFromArray(buffer.c_str(), (int)buffer.size()))
 				return status_t();
 
 			return status_t(-1,"ParseFromArray error");

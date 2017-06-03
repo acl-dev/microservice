@@ -24,8 +24,13 @@ namespace acl
 	{
 		if (message_type == "application/json")
 		{
-			return json_service_handles::get_instance()
-				.get_handle(func_name);
+			return json_service_handles::get_instance().
+				get_handle(func_name);
+				
+		}else if(message_type == "application/x-protobuf")
+		{
+			return protobuf_service_handles::get_instance().
+				get_handle(func_name);
 		}
 		logger_error("not message type :%s", message_type.c_str());
 		return NULL;
