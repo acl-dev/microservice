@@ -18,7 +18,6 @@ namespace acl
 			REQ req;
 			RESP resp;
 
-
 			if (!req.ParseFromArray(data.c_str(), data.size()))
 			{
 				logger_error("ParseFromArray failed");

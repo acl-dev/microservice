@@ -69,17 +69,17 @@ namespace acl
 			int conn_timeout = 30, int rw_timeout = 30);
 
 		/*
-		*json rest 远程调用
+		*json rpc 远程调用
 		* @param service_name { const string& } 服务名称
 		* @param req_type { const ReqType & } 请求参数对象
 		* @param req_type { const ReqType & } 响应对象
 		* @return { status } 如果返回 status == true 则表示调用成功。
 		*/
-		template<class ReqType, class RespType>
+		template<class REQ, class RESP>
 		status_t json_call(
 			const string &service_name, 
-			const ReqType &req_type, 
-			RespType &resp)
+			const REQ &req_type, 
+			RESP &resp)
 		{ 
 			string buffer;
 
@@ -97,6 +97,34 @@ namespace acl
 				return status_t(-1, ret.second.c_str());
 			}
 			return status_t();
+		}
+		/*
+		* proto 远程调用
+		* @param service_name { const string& } 服务名称
+		* @param req_type { const ReqType & } 请求参数对象
+		* @param req_type { const ReqType & } 响应对象
+		* @return { status } 如果返回 status == true 则表示调用成功。
+		*/
+		template<class REQ, class RESP>
+		status_t proto_call(
+			const string &service_name,
+			const REQ &req,
+			RESP &resp)
+		{
+			string buffer;
+			std::string data = req.SerializeAsString();
+
+			status_t status = invoke_http_req(service_name,
+				"application/json",
+				string(data.c_str(), data.size()),
+				buffer);
+			if (!status)
+				return status;
+
+			if (resp.ParseFromArray(buffer.c_str(), buffer.size()))
+				return status_t();
+
+			return status_t(-1,"ParseFromArray error");
 		}
 
 		/*

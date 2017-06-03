@@ -1,13 +1,13 @@
 #pragma once
 namespace acl
 {
-	template<class Context, class ReqType, class RespType>
+	template<class CONTEXT, class REQ, class RESP>
 	class json_service_handle: public service_handle
 	{
 	public:
-		typedef bool (Context::*func_t)(const ReqType &, RespType&);
+		typedef bool (CONTEXT::*func_t)(const REQ &, RESP&);
 
-		json_service_handle(Context *ctx, func_t fun)
+		json_service_handle(CONTEXT *ctx, func_t fun)
 			:context_(ctx),
 			function_(fun)
 		{
@@ -15,8 +15,8 @@ namespace acl
 
 		virtual bool invoke(const string &data, string &buffer)
 		{
-			ReqType req;
-			RespType resp;
+			REQ req;
+			RESP resp;
 
 			//data --> req obj
 			std::pair<bool, std::string> status = gson(data, req);
@@ -35,7 +35,7 @@ namespace acl
 		}
 
 	private:
-		Context *context_;
+		CONTEXT *context_;
 		func_t function_;
 	};
 }

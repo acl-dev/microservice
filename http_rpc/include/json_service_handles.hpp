@@ -10,9 +10,9 @@ namespace acl
 			return instance;
 		}
 
-		template<class Context, class ReqType, class RespType>
-		bool add(const char *service_path, Context *ctx,
-			bool(Context::*func)(const ReqType &, RespType &))
+		template<class CONTEXT, class REQ, class RESP>
+		bool add(const char *service_path, CONTEXT *ctx,
+			bool(CONTEXT::*func)(const REQ &, RESP &))
 		{
 			acl::lock_guard guard(lock_);
 			if (exist(service_path))
@@ -23,7 +23,7 @@ namespace acl
 			}
 			message_handles_.insert(std::make_pair(service_path,
 				new json_service_handle<
-				Context, ReqType, RespType>(ctx, func)));
+				CONTEXT, REQ, RESP>(ctx, func)));
 
 			return true;
 		}

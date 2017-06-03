@@ -2,7 +2,8 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
-    <acl>F:\fork\acl-dev\acl</acl>
+    <acl-dev>G:\fork\acl-dev</acl-dev>
+    <acl>$(acl-dev)\acl\</acl>
   </PropertyGroup>
   <PropertyGroup />
   <ItemDefinitionGroup>
@@ -17,6 +18,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <BuildMacro Include="acl-dev">
+      <Value>$(acl-dev)</Value>
+    </BuildMacro>
     <BuildMacro Include="acl">
       <Value>$(acl)</Value>
     </BuildMacro>

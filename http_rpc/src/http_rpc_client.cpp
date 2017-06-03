@@ -77,7 +77,7 @@ namespace acl
 		{
 			status = invoke_http_req(service_name,
 				(http_request_pool*)pools[i],
-				"application/json",
+				context_type,
 				req_data,
 				resp_buffer);
 
@@ -132,7 +132,6 @@ namespace acl
 		int   ret = 0;
 
 		// 接收 HTTP 响应体数据
-		long long body_len = conn->body_length();
 		while (true)
 		{
 			ret = conn->read_body(buf, sizeof(buf));
