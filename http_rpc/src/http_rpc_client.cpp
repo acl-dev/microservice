@@ -53,15 +53,22 @@ namespace acl
 		http_rpc_client::json_call(
 			const string &service_name,
 			const string &req,
-			string &resp)
+			string &resp,
+			unsigned int rw_timeout)
 	{
-		return invoke_http_req(service_name,"application/json",req,resp);
+		return invoke_http_req(
+			service_name,
+			"application/json",
+			req,
+			resp,
+			rw_timeout);
 	}
 	http_rpc_client::status_t
 		http_rpc_client::invoke_http_req(const string &service_name,
 			const char *context_type,
 			const string&req_data,
-			string &resp_buffer)
+			string &resp_buffer,
+			unsigned int rw_timeout)
 	{
 
 		status_t status;
@@ -79,7 +86,8 @@ namespace acl
 				(http_request_pool*)pools[i],
 				context_type,
 				req_data,
-				resp_buffer);
+				resp_buffer,
+				rw_timeout);
 
 			if (status)
 				break;
@@ -93,7 +101,8 @@ namespace acl
 		http_request_pool *pool,
 		const char *context_type,
 		const string&req_data,
-		string &resp_buffer)
+		string &resp_buffer,
+		unsigned int rw_timeout)
 	{
 
 		// 从连接池中获取一个 HTTP 连接
@@ -114,6 +123,12 @@ namespace acl
 		else
 			conn->reset();
 
+		//set rw_timeout.
+		(*conn->get_client()).
+			get_stream().
+			set_rw_timeout(rw_timeout);
+		
+		//set http head
 		conn->request_header().
 			set_url(service_path).
 			set_content_type(context_type).
@@ -230,7 +245,8 @@ namespace acl
 				(http_request_pool*)pools[i],
 				"application/json",
 				gson(req),
-				buffer);
+				buffer,
+				30);
 			if (status)
 				break;
 		}
@@ -259,7 +275,9 @@ namespace acl
 	void http_rpc_client::update_services_addr()
 	{
 		//req 
-		nameserver_proto::find_services_req req;
+		nameserver_proto::find_services_req  req;
+		nameserver_proto::find_services_resp resp;
+		std::vector<connect_pool* >			 pools;
 
 		//pack requst data
 		do
@@ -283,7 +301,6 @@ namespace acl
 			return;
 		
 		//find connect pool for http_requst
-		std::vector<connect_pool* >pools;
 
 		if (!find_connect_pool(
 			http_rpc_config::var_cfg_find_services,
@@ -293,8 +310,6 @@ namespace acl
 				http_rpc_config::var_cfg_find_services);
 			return;
 		}
-
-		nameserver_proto::find_services_resp resp;
 
 		//发起rpc 请求 服务信息
 		string buffer;
@@ -306,7 +321,8 @@ namespace acl
 				(http_request_pool*)pools[i],
 				"application/json",
 				gson(req),
-				buffer);
+				buffer,
+				30);
 			if (status)
 				break;
 		}
@@ -351,12 +367,15 @@ namespace acl
 				for (std::vector<string>::iterator it = addrs.begin();
 					it != addrs.end(); )
 				{
-					if(http_rpc_config::var_cfg_sync_del_nameserver_service|| 
-						(nameserver_services_.find(service_path)
-							== nameserver_services_.end()))
+					bool not_nameserver_services = 
+						nameserver_services_.find(service_path) == 
+							nameserver_services_.end();
+
+					if(http_rpc_config::var_cfg_sync_del_nameserver_service || 
+						not_nameserver_services)
 					{
-						if (service_info.server_addrs.find(*it)
-							== service_info.server_addrs.end())
+						if (service_info.server_addrs.find(*it) == 
+							service_info.server_addrs.end())
 						{
 							logger("delete service:%s addr:%s", 
 								service_path.c_str(), it->c_str());

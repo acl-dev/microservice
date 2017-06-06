@@ -73,20 +73,24 @@ namespace acl
 		* @param service_name { const string& } 服务名称
 		* @param req_type { const ReqType & } 请求参数对象
 		* @param req_type { const ReqType & } 响应对象
+		* @rw_timeout {unsigned int} rpc 读写超时时间，秒
 		* @return { status } 如果返回 status == true 则表示调用成功。
 		*/
 		template<class REQ, class RESP>
 		status_t json_call(
 			const string &service_name, 
 			const REQ &req_type, 
-			RESP &resp)
+			RESP &resp, 
+			unsigned int rw_timeout = 30)
 		{ 
 			string buffer;
 
 			status_t status = invoke_http_req(service_name, 
 				"application/json",
 				gson(req_type), 
-				buffer);
+				buffer,
+				rw_timeout);
+
 			if (!status)
 				return status;
 
@@ -103,13 +107,15 @@ namespace acl
 		* @param service_name { const string& } 服务名称
 		* @param req_type { const ReqType & } 请求参数对象
 		* @param req_type { const ReqType & } 响应对象
+		* @rw_timeout {unsigned int} rpc 读写超时时间，秒
 		* @return { status } 如果返回 status == true 则表示调用成功。
 		*/
 		template<class REQ, class RESP>
 		status_t proto_call(
 			const string &service_name,
 			const REQ &req,
-			RESP &resp)
+			RESP &resp,
+			unsigned int rw_timeout = 30)
 		{
 			string buffer;
 			std::string data = req.SerializeAsString();
@@ -117,7 +123,8 @@ namespace acl
 			status_t status = invoke_http_req(service_name,
 				"application/x-protobuf",
 				string(data.c_str(), data.size()),
-				buffer);
+				buffer,
+				rw_timeout);
 			if (!status)
 				return status;
 
@@ -132,12 +139,14 @@ namespace acl
 		* @param service_name { const string& } 服务名称
 		* @param req_type { const string & } 请求参数对象
 		* @param req_type { const string & } 响应对象
+		* @rw_timeout {unsigned int} rpc 读写超时时间，秒
 		* @return { status } 如果返回 status == true 则表示调用成功。
 		*/
 		status_t json_call(
 			const string &service_name,
 			const string &req, 
-			string &resp);
+			string &resp,
+			unsigned int rw_timeout = 30);
 	private:
 		http_rpc_client();
 		http_rpc_client(const http_rpc_client&);
@@ -150,13 +159,15 @@ namespace acl
 			http_request_pool *pool,
 			const char *context_type,
 			const string&req_data,
-			string &resp_buffer);
+			string &resp_buffer,
+			unsigned int rw_timeout);
 
 		status_t invoke_http_req(
 			const string &service_path,
 			const char *context_type, 
 			const string&req_data, 
-			string &resp_buffer);
+			string &resp_buffer,
+			unsigned int rw_timeout);
 
 		bool find_connect_pool(
 			const string &service_name, 
