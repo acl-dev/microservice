@@ -55,6 +55,6 @@ namespace acl
 
 		locker locker_;
 		//addr:service_path
-		std::map<string, std::set<string>> services;
+		std::map<string, std::set<string> > services;
 	};
 }
