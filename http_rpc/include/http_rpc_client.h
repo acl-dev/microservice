@@ -28,54 +28,26 @@ namespace acl
 			string error_str_;
 		};
 
-		/**
-		 * 自动同步nameserver 最新的 服务信息
-		 * 函数会启动线程作定时同步任务
-		 * @param interval { int }同步的时间间隔,建议3秒
-		 */
+
 		void auto_sync_service(int interval = 3);
 
-		/**
-		* 停止同步nameserver 最新的 服务信息
-		*/
+
 		void stop_sync_service();
 
-		/**
-		 * 添加 nameserver
-		 * @param addr { const string &} nameserver 地址
-		 */
+
 		void add_nameserver(const string &addr);
 
-		/*
-		* 添加服务
-		* @param addr { const string & }服务地址
-		* @param service_path { const string & }服务路径
-		* @param conn_timeout { int }连接超时时间
-		* @param service_path { int }读写超时时间
-		*/
+
 		void add_service(const string &addr, const string &service_path, 
 			int conn_timeout = 30, int rw_timeout  = 30);
 
 
-		/*
-		* 添加服务
-		* @param addr { const string &} 服务地址
-		* @param service_path { const std::vector<string>& } 服务路径数组
-		* @param conn_timeout { int }连接超时时间
-		* @param service_path { int }读写超时时间
-		*/
+
 		void add_service(const string &addr, 
 			const std::vector<string> &service_paths,
 			int conn_timeout = 30, int rw_timeout = 30);
 
-		/*
-		*json rpc 远程调用
-		* @param service_name { const string& } 服务名称
-		* @param req_type { const ReqType & } 请求参数对象
-		* @param req_type { const ReqType & } 响应对象
-		* @rw_timeout {unsigned int} rpc 读写超时时间，秒
-		* @return { status } 如果返回 status == true 则表示调用成功。
-		*/
+
 		template<class REQ, class RESP>
 		status_t json_call(
 			const string &service_name, 
@@ -102,14 +74,7 @@ namespace acl
 			}
 			return status_t();
 		}
-		/*
-		* proto 远程调用
-		* @param service_name { const string& } 服务名称
-		* @param req_type { const ReqType & } 请求参数对象
-		* @param req_type { const ReqType & } 响应对象
-		* @rw_timeout {unsigned int} rpc 读写超时时间，秒
-		* @return { status } 如果返回 status == true 则表示调用成功。
-		*/
+
 		template<class REQ, class RESP>
 		status_t proto_call(
 			const string &service_name,
@@ -134,14 +99,7 @@ namespace acl
 			return status_t(-1,"ParseFromArray error");
 		}
 
-		/*
-		* http 远程调用
-		* @param service_name { const string& } 服务名称
-		* @param req_type { const string & } 请求参数对象
-		* @param req_type { const string & } 响应对象
-		* @rw_timeout {unsigned int} rpc 读写超时时间，秒
-		* @return { status } 如果返回 status == true 则表示调用成功。
-		*/
+
 		status_t json_call(
 			const string &service_name,
 			const string &req, 
@@ -196,7 +154,7 @@ namespace acl
 		};
 		//service_name:addr
 		std::map<string, http_rpc_service_info*> service_addrs_;
-		//连接池管理
+
 		http_request_manager *conn_manager_;
 
 		//nameserver's services

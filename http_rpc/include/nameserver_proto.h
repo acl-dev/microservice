@@ -124,14 +124,6 @@ namespace nameserver_proto
 	}
 	*/
 
-	/**
-	 * path 服务路劲：
-	 * / 获取全部
-	 * /server_name 获取/server_name 下面的所以服务列表
-	 * /server_name/module_name/ 获取/server_name/module_name 下面的所以服务列表
-	 * /server_name/module_name/service 获取/server_name/module_name/service 服务
-	 */
-
 	struct list_services_req
 	{
 		acl::string service_path;

@@ -1,5 +1,5 @@
 #pragma once
-// 用户访问列表类，用来判断所给用户是否允许使用本服务
+
 
 class access_list : public acl::singleton<access_list>
 {

@@ -70,10 +70,10 @@ namespace acl
 			resp.setContentType("text/html; charset=utf-8");
 			resp.setContentLength(buf.size());
 			resp.setKeepAlive(false);
-			// 发送 http 响应头
+
 			if (resp.sendHeader() == false)
 				return false;
-			// 发送 http 响应体
+
 			(void)resp.getOutputStream().write(buf);
 			return false;
 		}

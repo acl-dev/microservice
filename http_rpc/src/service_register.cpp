@@ -28,10 +28,9 @@ namespace acl
 			timeval start, end;
 			gettimeofday(&start, NULL);
 			locker_.lock();
-			for (std::map<string, std::set<string>>::iterator 
-				it =services.begin(); 
-				it != services.end(); 
-				++it)
+			for (std::map<string, std::set<string> >::iterator
+					it = services.begin();
+					it != services.end(); ++it)
 			{
 				std::vector<string> services;
 				for (std::set<string>::iterator 

@@ -70,6 +70,5 @@ void access_list::set_allow_clients(const char* iplist)
 }
 bool access_list::check_client(const char* ip)
 {
-	return acl_iplink_lookup_str(allow_clients_, ip) == NULL
-		? false : true;
+	return !acl_iplink_lookup_str(allow_clients_, ip);
 }

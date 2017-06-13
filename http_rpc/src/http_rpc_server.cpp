@@ -35,7 +35,6 @@ namespace acl
 			redis_cluster_cli_->set(redis_addr,acl_var_threads_pool_limit);
 		}
 
-		//设置白名单
 		string allow_clients(http_rpc_config::var_cfg_allow_clients);
 		if (allow_clients.size())
 		{
@@ -43,7 +42,7 @@ namespace acl
 				.set_allow_clients(allow_clients);
 		}
 
-		//配置nameserver 服务
+
 		http_rpc_client& client = http_rpc_client::get_instance();
 		string addr(http_rpc_config::var_cfg_nameserver_addr);
 		if (addr.size())
@@ -51,10 +50,10 @@ namespace acl
 		else
 			logger_warn("nameserver address empty !!!!!");
 
-		//自动从nameserver 同步service 
+
 		client.auto_sync_service();
 
-		//nameserver 也需要给自己发送心跳
+
 		service_register::get_instance().start();
 
 		//init child
@@ -93,18 +92,17 @@ namespace acl
 
 		if (peer == NULL || *peer == 0)
 		{
-			logger_warn("invalid client, local: %s, peer: %s"
-				,peer ? peer : "null");
+			logger_warn("invalid client,peer: %s" ,peer ? peer : "null");
 			return false;
 		}
-		// 检查rpc_client IP 访问权限
+
 		if (access_list::get_instance().check_client(peer) == false)
 		{
 			logger_warn("Denied from server ip: %s", peer);
 			return false;
 		}
 
-		//rpc 读写超时时间
+
 		stream->set_rw_timeout(http_rpc_config::var_cfg_rw_timeout);
 
 		http_rpc_servlet *servlet = new http_rpc_servlet;

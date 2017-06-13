@@ -339,7 +339,7 @@ namespace acl
 		std::pair<bool, std::string> ret = gson(buffer, resp);
 		if (!ret.first)
 		{
-			logger_error("gson error:%s", buffer);
+			logger_error("gson error:%s", buffer.c_str());
 			return;
 		}
 		if (resp.status != "ok")

@@ -1,6 +1,4 @@
 #include "http_rpc.h"
-#include "nameserver_proto.h"
-#include "nameserver_proto_gson.h"
 #include "acl_cpp/serialize/gson_helper.ipp"
 namespace acl
 {
