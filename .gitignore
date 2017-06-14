@@ -34,3 +34,5 @@ x64/
 Debug/
 .vs/
 *.VC.db
+#clion IDE config
+.idea/
