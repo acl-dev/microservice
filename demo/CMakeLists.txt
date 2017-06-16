@@ -1,0 +1,2 @@
+add_subdirectory(hello_client)
+add_subdirectory(hello_server)

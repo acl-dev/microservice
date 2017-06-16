@@ -28,7 +28,7 @@ acl::master_str_tbl acl::http_rpc_config::var_conf_str_tab[] = {
 	{ "var_cfg_del_service",     "/nameserver/service_mgr/list",  &var_cfg_list_services },
 	{ "var_cfg_add_service",     "/nameserver/service_mgr/add",   &var_cfg_add_service },
 	{ "var_cfg_del_service",     "/nameserver/service_mgr/del",   &var_cfg_del_service },
-	{ "var_cfg_nameserver",      "nameserver",					  &var_cfg_nameserver },
+	{ "var_cfg_nameserver",      "nameserver",		      &var_cfg_nameserver },
 	{ "var_cfg_nameserver_addr", "127.0.0.1:10080",               &var_cfg_nameserver_addr },
 	{ "var_cfg_allow_clients",   "all",                           &var_cfg_allow_clients },
 	{ "var_cfg_redis_addr",	     "",                              &var_cfg_redis_addr },
@@ -45,7 +45,7 @@ acl::master_int64_tbl acl::http_rpc_config::var_conf_int64_tab[] = {
 };
 
 //最后一行必须是0,0,0表示结束
-acl::master_bool_tbl acl::http_rpc_config::var_conf_bool_tab[]{
+acl::master_bool_tbl acl::http_rpc_config::var_conf_bool_tab[] = {
 	{ "var_cfg_sync_del_service_addr", 1, &var_cfg_sync_del_service_addr },
 	{ 0, 0 , 0 }
 };

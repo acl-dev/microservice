@@ -97,7 +97,7 @@ namespace acl
 
 		if (peer == NULL || *peer == 0)
 		{
-			logger_warn("invalid client, local: %s, peer: %s"
+			logger_warn("invalid client peer: %s"
 				, peer ? peer : "null");
 			return false;
 		}
