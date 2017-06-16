@@ -28,5 +28,7 @@ namespace acl
 
 		int var_cfg_sync_del_service_addr = 1;
 		int var_cfg_sync_del_nameserver_service = 0;
+		int var_cfg_auto_sync_services = 1;
+		int var_cfg_auto_regist_services = 1;
 	}
 }

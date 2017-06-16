@@ -14,11 +14,10 @@ namespace acl
 
 	}
 
-
 	void* service_register::run()
 	{
-		int inter = 
-			http_rpc_config::var_cfg_regist_service_inter;
+		int inter = http_rpc_config::
+			var_cfg_regist_service_inter;
 		
 		//wait for server init
 		acl_doze(1000);
@@ -26,24 +25,11 @@ namespace acl
 		do
 		{
 			timeval start, end;
+			
 			gettimeofday(&start, NULL);
-			locker_.lock();
-			for (std::map<string, std::set<string> >::iterator
-					it = services.begin();
-					it != services.end(); ++it)
-			{
-				std::vector<string> services;
-				for (std::set<string>::iterator 
-					set_it =it->second.begin();
-					set_it != it->second.end(); 
-					set_it++)
-				{
-					services.push_back(*set_it);
-				}
-				if (services.size())
-					rpc_regist_service(it->first, services);
-			}
-			locker_.unlock();
+			
+			do_regist_service();
+
 			gettimeofday(&end, NULL);
 
 			long millis = (end.tv_sec - start.tv_sec) * 1000;
@@ -59,6 +45,27 @@ namespace acl
 		} while (!is_stop_);
 
 		return NULL;
+	}
+
+	void service_register::do_regist_service()
+	{
+		acl::lock_guard lg(locker_);
+
+		for (std::map<string, std::set<string> >::iterator it
+			= services_.begin();
+			it != services_.end(); ++it)
+		{
+			std::vector<string> service_paths;
+			for (std::set<string>::iterator
+				set_it = it->second.begin();
+				set_it != it->second.end();
+				set_it++)
+			{
+				service_paths.push_back(*set_it);
+			}
+			if (service_paths.size())
+				rpc_regist_service(it->first, service_paths);
+		}
 	}
 
 	
@@ -86,33 +93,18 @@ namespace acl
 	void service_register::del(const string &addr_,
 		const string& service_path)
 	{
-		nameserver_proto::del_services_req req;
-		nameserver_proto::del_services_resp resp;
-
-		req.server_addr = addr_;
-		req.service_paths.push_back(service_path);
-
-		http_rpc_client::status_t status =
-			http_rpc_client::get_instance().
-			json_call(http_rpc_config::var_cfg_del_service,
-				req, resp);
-		if (!status)
-		{
-			logger_error("json_call failed:%s", status.error_str_.c_str());
-		}
-		//del from service success 
-		//service from register timer
-		//when lost heartheat.nameserver will delete timeout service
-
+		//when timeout. nameserver will delete timeout service
 		lock_guard guard(locker_);
-		services[addr_].erase(service_path);
+		services_[addr_].erase(service_path);
 	}
 
 	void service_register::regist(const string &addr_,
 		const string& service_path)
 	{
+		//add service to service_register.
+		//it will auto regist it to nameserver
 		lock_guard guard(locker_);
-		services[addr_].insert(service_path);
+		services_[addr_].insert(service_path);
 	}
 
 	void service_register::stop()

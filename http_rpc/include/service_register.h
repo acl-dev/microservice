@@ -19,7 +19,9 @@ namespace acl
 		void stop();
 	private:
 		service_register();
+
 		service_register(const service_register&);
+		
 		service_register &operator= (const service_register&);
 
 		void rpc_regist_service(const string &addr, 
@@ -27,10 +29,14 @@ namespace acl
 
 		virtual void* run();
 
+		void do_regist_service();
+	private:
+
+
 		bool is_stop_;
 
 		locker locker_;
 		//addr:service_path
-		std::map<string, std::set<string> > services;
+		std::map<string, std::set<string> > services_;
 	};
 }

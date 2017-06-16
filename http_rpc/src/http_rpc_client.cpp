@@ -13,23 +13,25 @@ namespace acl
 	void http_rpc_client::init()
 	{
 		using namespace http_rpc_config;
-		//初始化nameserver service 集合
+		//init nameserver service
 		nameserver_services_.insert(var_cfg_add_service);
 		nameserver_services_.insert(var_cfg_del_service);
 		nameserver_services_.insert(var_cfg_find_service);
 		nameserver_services_.insert(var_cfg_find_services);
 		nameserver_services_.insert(var_cfg_list_services);
 
-		// 创建 HTTP 请求连接池集群管理对象
+		// create http connection pool manager
 		conn_manager_ = new http_request_manager();
 		connect_monitor* monitor =
 			new connect_monitor(*conn_manager_);
 
 		(*monitor).set_check_inter(
-				http_rpc_config::var_cfg_rpc_conn_check_inter).
+			http_rpc_config::var_cfg_rpc_conn_check_inter).
 			set_conn_timeout(
 				http_rpc_config::var_cfg_rpc_conn_check_timeout);
-		// 启动后台检测线程
+
+		// start connection pool monitor
+		//it will auto connect
 		conn_manager_->start_monitor(monitor);
 	}
 	void http_rpc_client::auto_sync_service(int interval)
@@ -64,7 +66,8 @@ namespace acl
 			rw_timeout);
 	}
 	http_rpc_client::status_t
-		http_rpc_client::invoke_http_req(const string &service_name,
+		http_rpc_client::invoke_http_req(
+			const string &service_name,
 			const char *context_type,
 			const string&req_data,
 			string &resp_buffer,
@@ -78,8 +81,7 @@ namespace acl
 			return status_t(-1,
 				string("get_connect_pool failed: ") += service_name);
 
-		//轮循均衡 Round Robin
-		//直到有一个成功，或者都是失败。
+		//Round Robin
 		for (size_t i = 0; i < pools.size(); i++)
 		{
 			status = invoke_http_req(service_name,
@@ -105,7 +107,8 @@ namespace acl
 		unsigned int rw_timeout)
 	{
 
-		// 从连接池中获取一个 HTTP 连接
+		// connect_guard will auto push connection back 
+		//to connection pool
 		connect_guard _connect_guard(*pool);
 		http_request* conn = (http_request*)_connect_guard.peek();
 
@@ -117,17 +120,14 @@ namespace acl
 			return status_t(-1, string("peek connect "
 				"failed from :") += pool->get_addr());
 		}
-
-		// 需要对获得的连接重置状态，
-		//以清除上次请求过程的临时数据
 		else
-			conn->reset();
+			conn->reset();//clear data
 
-		//set rw_timeout.
+						  //set rw_timeout.
 		(*conn->get_client()).
 			get_stream().
 			set_rw_timeout(rw_timeout);
-		
+
 		//set http head
 		conn->request_header().
 			set_url(service_path).
@@ -146,7 +146,7 @@ namespace acl
 		char  buf[8192];
 		int   ret = 0;
 
-		// 接收 HTTP 响应体数据
+		//read resp data
 		while (true)
 		{
 			ret = conn->read_body(buf, sizeof(buf));
@@ -157,7 +157,7 @@ namespace acl
 				_connect_guard.set_keep(false);
 				logger_error("http_request read_body error");
 
-				return status_t(-1, 
+				return status_t(-1,
 					"http_request read_body error");
 			}
 			resp_buffer.append(buf, ret);
@@ -211,7 +211,7 @@ namespace acl
 			std::vector<string> addrs;
 			if (rpc_find_service_addr(service_name, addrs))
 			{
-				for(size_t i = 0; i < addrs.size(); i++)
+				for (size_t i = 0; i < addrs.size(); i++)
 					add_service(addrs[i], service_name);
 				return find_connect_pool(service_name, pools);
 			}
@@ -235,9 +235,11 @@ namespace acl
 		nameserver_proto::find_service_resp resp;
 
 		req.service_path = service_path;
-		//发起rpc 请求 服务信息
+
 		string buffer;
 		status_t status;
+
+		//round robin 
 		for (size_t i = 0; i < pools.size(); i++)
 		{
 			status = invoke_http_req(
@@ -252,7 +254,7 @@ namespace acl
 		}
 		if (!status)
 		{
-			logger_error("invoke_http_req failed: %s", 
+			logger_error("invoke_http_req failed: %s",
 				status.error_str_.c_str());
 			return false;
 		}
@@ -288,8 +290,8 @@ namespace acl
 			if (service_addrs_.empty())
 				return;
 
-			std::map<string, http_rpc_service_info*>::iterator 
-				it= service_addrs_.begin();
+			std::map<string, http_rpc_service_info*>::iterator
+				it = service_addrs_.begin();
 
 			for (; it != service_addrs_.end(); ++it)
 			{
@@ -299,7 +301,7 @@ namespace acl
 
 		if (req.service_paths.empty())
 			return;
-		
+
 		//find connect pool for http_requst
 
 		if (!find_connect_pool(
@@ -311,7 +313,7 @@ namespace acl
 			return;
 		}
 
-		//发起rpc 请求 服务信息
+
 		string buffer;
 		status_t status;
 		for (size_t i = 0; i < pools.size(); i++)
@@ -334,12 +336,12 @@ namespace acl
 				status.error_str_.c_str());
 			return;
 		}
-			
+
 		//resp json --> resp obj
 		std::pair<bool, std::string> ret = gson(buffer, resp);
 		if (!ret.first)
 		{
-			logger_error("gson error:%s", buffer.c_str());
+			logger_error("gson error:%s", buffer);
 			return;
 		}
 		if (resp.status != "ok")
@@ -348,36 +350,35 @@ namespace acl
 			return;
 		}
 		//process resp
-		//todo 优化
 		lock_guard guard(service_addrs_locker_);
 
 		for (size_t i = 0; i < req.service_paths.size(); i++)
 		{
 			string &service_path = req.service_paths[i];
 
-			nameserver_proto::service_info &service_info 
+			nameserver_proto::service_info &service_info
 				= resp.service_infos[service_path];
 
 			std::vector<string> &addrs = service_addrs_[service_path]->addrs_;
 
 			if (http_rpc_config::var_cfg_sync_del_service_addr)
 			{
-				
+
 				// delete dead service addrs
 				for (std::vector<string>::iterator it = addrs.begin();
 					it != addrs.end(); )
 				{
-					bool not_nameserver_services = 
-						nameserver_services_.find(service_path) == 
-							nameserver_services_.end();
+					bool not_nameserver_services =
+						nameserver_services_.find(service_path) ==
+						nameserver_services_.end();
 
-					if(http_rpc_config::var_cfg_sync_del_nameserver_service || 
+					if (http_rpc_config::var_cfg_sync_del_nameserver_service ||
 						not_nameserver_services)
 					{
-						if (service_info.server_addrs.find(*it) == 
+						if (service_info.server_addrs.find(*it) ==
 							service_info.server_addrs.end())
 						{
-							logger("delete service:%s addr:%s", 
+							logger("delete service:%s addr:%s",
 								service_path.c_str(), it->c_str());
 
 							conn_manager_->remove(*it);
@@ -390,9 +391,9 @@ namespace acl
 			}
 
 			//add new addr for service
-			for (std::set<string>::iterator 
-				it = service_info.server_addrs.begin(); 
-				it != service_info.server_addrs.end(); 
+			for (std::set<string>::iterator
+				it = service_info.server_addrs.begin();
+				it != service_info.server_addrs.end();
 				it++)
 			{
 				bool find = false;
@@ -410,13 +411,13 @@ namespace acl
 					conn_manager_->set(it->c_str(), 0);
 
 					logger("add service:%s addr:%s",
-						service_path.c_str(),it->c_str());
+						service_path.c_str(), it->c_str());
 				}
 			}
 		}
 	}
 
-	void http_rpc_client::add_service( 
+	void http_rpc_client::add_service(
 		const string &addr,
 		const std::vector<string> &service_paths,
 		int conn_timeout /* = 30 */,
@@ -432,13 +433,13 @@ namespace acl
 		std::set<string>::iterator it = nameserver_services_.begin();
 		for (; it != nameserver_services_.end(); it++)
 		{
-			add_service(addr,*it);
+			add_service(addr, *it);
 		}
 	}
 	void http_rpc_client::add_service(
 		const string &addr,
-		const string &service_name, 
-		int conn_timeout /* = 30 */, 
+		const string &service_name,
+		int conn_timeout /* = 30 */,
 		int rw_timeout /* = 30 */)
 	{
 		lock_guard guard(service_addrs_locker_);
