@@ -27,6 +27,7 @@ namespace acl
 			int ret_;
 			string error_str_;
 		};
+        void start_connect_monitor();
 
 
 		void auto_sync_service(int interval = 3);
@@ -148,8 +149,6 @@ namespace acl
 		//service_name:addr
 		std::map<string, http_rpc_service_info*> service_addrs_;
 
-		http_request_manager *conn_manager_;
-
 		//nameserver's services
 		std::set<string> nameserver_services_;
 
@@ -157,5 +156,9 @@ namespace acl
 		int sync_inter_;
 
 		bool start_sync_;
+
+        connect_monitor* monitor_;
+
+        http_request_manager *conn_manager_;
 	};
 }

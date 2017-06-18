@@ -5,7 +5,9 @@ namespace acl
 
 	http_rpc_client::http_rpc_client()
 		:sync_inter_(3),
-		start_sync_(false)
+         start_sync_(false),
+         monitor_(NULL),
+         conn_manager_(NULL)
 	{
 		init();
 	}
@@ -22,18 +24,25 @@ namespace acl
 
 		// create http connection pool manager
 		conn_manager_ = new http_request_manager();
-		connect_monitor* monitor =
-			new connect_monitor(*conn_manager_);
 
-		(*monitor).set_check_inter(
-			http_rpc_config::var_cfg_rpc_conn_check_inter).
-			set_conn_timeout(
-				http_rpc_config::var_cfg_rpc_conn_check_timeout);
-
-		// start connection pool monitor
-		//it will auto connect
-		conn_manager_->start_monitor(monitor);
 	}
+    void http_rpc_client::start_connect_monitor ()
+    {
+        if(monitor_)
+            return;
+
+        monitor_ = new connect_monitor(*conn_manager_);
+
+        (*monitor_ ).set_check_inter(
+                http_rpc_config::var_cfg_rpc_conn_check_inter).
+                set_conn_timeout(
+                http_rpc_config::var_cfg_rpc_conn_check_timeout);
+
+        // start connection pool monitor
+        //it will auto reconnect
+
+        conn_manager_->start_monitor(monitor_ );
+    }
 	void http_rpc_client::auto_sync_service(int interval)
 	{
 		if (start_sync_)
