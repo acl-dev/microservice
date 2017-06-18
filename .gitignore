@@ -34,8 +34,8 @@ x64/
 Debug/
 .vs/
 *.VC.db
+#clion IDE config
+.idea/
 build/
 cmake-build-debug/
 cmake-build-release/
-
-http_rpc/.idea/workspace.xml

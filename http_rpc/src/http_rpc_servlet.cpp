@@ -53,46 +53,69 @@ namespace acl
 	bool http_rpc_servlet::doPost(HttpServletRequest& req, 
 		HttpServletResponse& resp)
 	{
-		service_handle *handle = get_handle(
-			req.getContentType(false), 
-			req.getPathInfo());
+        const char *content_type = req.getContentType(false);
+        const char *path = req.getPathInfo();
+        long long int content_length = req.getContentLength();
 
-		if (!handle)
-		{
-			logger_error("can't find message "
-				"handle for path: %s", req.getPathInfo());
+		service_handle *handle = get_handle(content_type, path);
 
-			acl::string buf("404 Not Found");
+        if (handle == NULL)
+        {
+            logger_error("can't find message. path: %s", path);
 
-			buf += req.getPathInfo();
+            acl::string buf;
 
-			resp.setStatus(404);
-			resp.setContentType("text/html; charset=utf-8");
-			resp.setContentLength(buf.size());
-			resp.setKeepAlive(false);
+            buf += path;
+            buf += (". 404 Not Found");
 
-			if (resp.sendHeader() == false)
-				return false;
+            resp.setStatus(404);
+            resp.setContentType("text/html; charset=utf-8");
+            resp.setContentLength((long long int) buf.size());
+            resp.setKeepAlive(false);
 
-			(void)resp.getOutputStream().write(buf);
-			return false;
+            if (!resp.sendHeader())
+                return false;
+
+            (void)resp.getOutputStream().write(buf);
+            return false;
 		}
 
-		string body;
-		string buffer;
+        acl::istream& in = req.getInputStream();
+        string body;
+        char  buf[8192];
+        long long int length = content_length;
 
-		if(read_http_body(req, body) == false)
-			return false;
-		
+        while (length > 0)
+        {
+            size_t n = (size_t)length > sizeof(buf) - 1
+                    ? sizeof(buf) - 1 : (size_t)length;
+            int ret = in.read(buf, n, false);
+            if (ret == -1)
+            {
+                logger_error("read_http_body error."
+                             "service_path:%s "
+                             "content_type:%s "
+                             "content_length:%llu",
+                             path,
+                             content_type,
+                             content_length);
+
+                return false;
+            }
+            body.append(buf, ret);
+            length -= ret;
+        }
+
 		//create acl_pthread_key_create
 		acl_pthread_once(&once_control, once_init);
 		acl_pthread_setspecific(req_key, &req);
 
-		bool ret = handle->invoke(body, buffer);
+        string buffer;
+        bool ret = handle->invoke(body, buffer);
 
 		resp.setStatus(200)
 			.setKeepAlive(req.isKeepAlive())
-			.setContentLength(buffer.length());
+			.setContentLength((long long int) buffer.length());
 		if(!resp.write(buffer) || !req.isKeepAlive())
 			return false;
 		return ret;
@@ -109,36 +132,6 @@ namespace acl
 		HttpServletResponse&)
 	{
 		return false;
-	}
-
-	bool http_rpc_servlet::read_http_body(
-		HttpServletRequest &req, string &body)
-	{
-		long long int length = req.getContentLength();
-		if (length <= 0)
-		{
-			logger_error("length: %lld invalid", length);
-			return false;
-		}
-		acl::istream& in = req.getInputStream();
-		char  buf[8192];
-		int   ret;
-		size_t n;
-
-		while (length > 0)
-		{
-			n = (size_t)length > sizeof(buf) - 1
-				? sizeof(buf) - 1 : (size_t)length;
-			ret = in.read(buf, n, false);
-			if (ret == -1)
-			{
-				logger_error("read json body error");
-				return false;
-			}
-			body.append(buf, ret);
-			length -= ret;
-		}
-		return true;
 	}
 
 }

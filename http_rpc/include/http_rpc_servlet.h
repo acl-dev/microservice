@@ -19,8 +19,6 @@ namespace acl
 
 		virtual bool doError(HttpServletRequest&, HttpServletResponse&);
 
-		bool read_http_body(HttpServletRequest &req, string &body);
-
 		service_handle *get_handle(const string &message_type, 
 			const string &func_name);
 

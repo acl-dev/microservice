@@ -27,6 +27,7 @@ namespace acl
 			int ret_;
 			string error_str_;
 		};
+        void start_connect_monitor();
 
 
 		void auto_sync_service(int interval = 3);
@@ -50,16 +51,16 @@ namespace acl
 
 		template<class REQ, class RESP>
 		status_t json_call(
-			const string &service_name, 
+			const string &service_name,
 			const REQ &req_type, 
 			RESP &resp, 
 			unsigned int rw_timeout = 30)
 		{ 
 			string buffer;
 
-			status_t status = invoke_http_req(service_name, 
+			status_t status = invoke_http_req(service_name,
 				"application/json",
-				gson(req_type), 
+				gson(req_type),
 				buffer,
 				rw_timeout);
 
@@ -76,7 +77,7 @@ namespace acl
 		}
 
 		template<class REQ, class RESP>
-		status_t proto_call(
+		status_t pb_call(
 			const string &service_name,
 			const REQ &req,
 			RESP &resp,
@@ -84,7 +85,6 @@ namespace acl
 		{
 			string buffer;
 			std::string data = req.SerializeAsString();
-
 			status_t status = invoke_http_req(service_name,
 				"application/x-protobuf",
 				string(data.c_str(), data.size()),
@@ -99,33 +99,27 @@ namespace acl
 			return status_t(-1,"ParseFromArray error");
 		}
 
-
-		status_t json_call(
-			const string &service_name,
-			const string &req, 
-			string &resp,
-			unsigned int rw_timeout = 30);
-	private:
+        status_t invoke_http_req(
+                const string &service_path,
+                const char *context_type,
+                const string&req_data,
+                string &resp_buffer,
+                unsigned int rw_timeout = 30);
+    private:
 		http_rpc_client();
 		http_rpc_client(const http_rpc_client&);
 		http_rpc_client &operator =(const http_rpc_client&);
 
 		void init();
 
-		status_t invoke_http_req(
-			const string &service_path,
-			http_request_pool *pool,
-			const char *context_type,
-			const string&req_data,
-			string &resp_buffer,
-			unsigned int rw_timeout);
+        status_t invoke_http_req(
+                const string &service_path,
+                http_request_pool *pool,
+                const char *context_type,
+                const string &req_data,
+                acl::string &resp_buffer,
+                unsigned int rw_timeout);
 
-		status_t invoke_http_req(
-			const string &service_path,
-			const char *context_type, 
-			const string&req_data, 
-			string &resp_buffer,
-			unsigned int rw_timeout);
 
 		bool find_connect_pool(
 			const string &service_name, 
@@ -155,8 +149,6 @@ namespace acl
 		//service_name:addr
 		std::map<string, http_rpc_service_info*> service_addrs_;
 
-		http_request_manager *conn_manager_;
-
 		//nameserver's services
 		std::set<string> nameserver_services_;
 
@@ -164,5 +156,9 @@ namespace acl
 		int sync_inter_;
 
 		bool start_sync_;
+
+        connect_monitor* monitor_;
+
+        http_request_manager *conn_manager_;
 	};
 }

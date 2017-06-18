@@ -1,7 +1,8 @@
-#include "http_rpc.h"
+#include "lib_acl.h"
+#include "acl_cpp/lib_acl.hpp"
 #include "hello_proto.h"
 #include "hello_proto_gson.h"
-
+#include "http_rpc.h"
 
 
 class hello :public acl::service_base
@@ -54,12 +55,12 @@ int main(int argc, char *argv[])
 
 		if (argc >= 3)
 		{
-			// 单独运行方式
+			// 鍗曠嫭杩愯鏂瑰紡
 			server.run_alone(addr, argv[2], 0, 100);
 		}
 		else
 		{
-			// 单独运行方式
+			// 鍗曠嫭杩愯鏂瑰紡
 			server.run_alone(addr, NULL, 0, 100);
 		}
 

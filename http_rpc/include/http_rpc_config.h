@@ -50,21 +50,32 @@ namespace acl
 
 		extern int var_cfg_sync_del_nameserver_service;
 
+		extern int var_cfg_auto_sync_services;
+
+		extern int var_cfg_auto_regist_services;
 		/*
-		using acl::http_rpc_config;
+		//this is http_rpc default config
+		//copy it to your project and fix it to what you want.
+		//have fun!
+		using mamespace acl::http_rpc_config;
 
 		acl::master_int_tbl acl::http_rpc_config::var_conf_int_tab [] = {
+
+			//http_rpc default config
 			{ "var_cfg_redis_conn_timeout",     30, &var_cfg_redis_conn_timeout,     0, 0 },
 			{ "var_cfg_redis_rw_timeout",       30, &var_cfg_redis_rw_timeout,       0, 0 },
 			{ "var_cfg_rpc_conn_check_inter",   1,  &var_cfg_rpc_conn_check_inter,   0, 0 },
 			{ "var_cfg_rpc_conn_check_timeout", 5,  &var_cfg_rpc_conn_check_timeout, 0, 0 },
 			{ "var_cfg_register_service_inter", 3,  &var_cfg_regist_service_inter ,  0, 0 },
 			{ "var_cfg_update_service_inter",   3,  &var_cfg_update_service_inter ,  0, 0 },
+			
+			//your project config here:
 			{ NULL,                             0 , NULL ,                           0, 0 }
 		};
 
 		acl::master_str_tbl acl::http_rpc_config::var_conf_str_tab [] = {
 
+			//http_rpc default config
 			{ "var_cfg_find_service",    "/nameserver/service_mgr/find",  &var_cfg_find_service    },
 			{ "var_cfg_find_services",   "/nameserver/service_mgr/finds", &var_cfg_find_services   },
 			{ "var_cfg_add_service",     "/nameserver/service_mgr/add",   &var_cfg_add_service     },
@@ -77,6 +88,8 @@ namespace acl
 			{ "var_cfg_redis_addr",	     "",                              &var_cfg_redis_addr      },
 			{ "var_cfg_server_addr",     "",                              &var_cfg_server_addr     },
 			{ "var_cfg_server_name",     "",                              &var_cfg_server_name     },
+			
+			//your project config here:
 			{ NULL,                      NULL,                            NULL                     }
 		};
 
@@ -86,7 +99,11 @@ namespace acl
 		};
 
 		acl::master_bool_tbl acl::http_rpc_config::var_conf_bool_tab [] = {
-			{"var_cfg_sync_del_service_addr", true,   &var_cfg_sync_del_service_addr}
+			
+			//http_rpc default config
+			{"var_cfg_sync_del_service_addr", true,   &var_cfg_sync_del_service_addr},
+
+			//your project config here:
 			{ NULL                          , false , NULL }
 		};
 		*/
