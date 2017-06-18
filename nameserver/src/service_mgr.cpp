@@ -12,7 +12,7 @@ service_mgr::~service_mgr()
 {
 
 }
-//∏Ò Ω « /server/module/interface
+//server/module/interface
 
 static bool to_service_path(acl::string &path,
 	std::vector<acl::string> &tokens)
@@ -23,11 +23,7 @@ static bool to_service_path(acl::string &path,
 		return false;
 	}
 	tokens = path.split2("/");
-	if (tokens.empty() || tokens.size() != 3)
-	{
-		return false;
-	}
-	return true;
+	return tokens.size() == 3;
 }
 bool service_mgr::add(
 	const nameserver_proto::add_services_req &req,

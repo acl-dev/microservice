@@ -12,7 +12,7 @@ namespace acl
 			CONTEXT *ctx,
 			bool(CONTEXT::*func)(const REQ&, RESP&))
 		{
-
+			logger("regist service_path:%s",service_path);
 			string nameserver(http_rpc_config::var_cfg_nameserver);
 			string nameserver_addr(http_rpc_config::var_cfg_nameserver_addr);
 			if (nameserver.size() && nameserver_addr.size())
@@ -30,7 +30,7 @@ namespace acl
 			CONTEXT *ctx, 
 			bool(CONTEXT::*func)(const REQ&, RESP&))
 		{
-
+			logger("regist service_path:%s",service_path);
 			string nameserver(http_rpc_config::var_cfg_nameserver);
 			string nameserver_addr(http_rpc_config::var_cfg_nameserver_addr);
 			if (nameserver.size() && nameserver_addr.size())

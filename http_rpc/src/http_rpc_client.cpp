@@ -52,28 +52,13 @@ namespace acl
 	}
 
 	http_rpc_client::status_t
-		http_rpc_client::json_call(
-			const string &service_name,
-			const string &req,
-			string &resp,
-			unsigned int rw_timeout)
-	{
-		return invoke_http_req(
-			service_name,
-			"application/json",
-			req,
-			resp,
-			rw_timeout);
-	}
-	http_rpc_client::status_t
 		http_rpc_client::invoke_http_req(
 			const string &service_name,
 			const char *context_type,
-			const string&req_data,
+			const string &req_data,
 			string &resp_buffer,
 			unsigned int rw_timeout)
 	{
-
 		status_t status;
 		std::vector<connect_pool*> pools;
 
@@ -102,7 +87,7 @@ namespace acl
 		const string &service_path,
 		http_request_pool *pool,
 		const char *context_type,
-		const string&req_data,
+		const string &req_data,
 		string &resp_buffer,
 		unsigned int rw_timeout)
 	{

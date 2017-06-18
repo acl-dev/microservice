@@ -1,14 +1,14 @@
 #include "http_rpc.h"
 
-//var_cfg_server_name£¬
+//var_cfg_server_nameï¼Œ
 //var_cfg_server_addr,
 //var_cfg_nameserver_addr
-//±ØĞëÅäÖÃ
-//ÊµÏÖ×Ô¼ºµÄÅäÖÃĞÅÏ¢
-//ÓĞĞ´ÄÚÈİÄ¬ÈÏÊÇ¿ÕµÄ£¬²»ÄÜÖ±½ÓÊ¹ÓÃ
+//å¿…é¡»é…ç½®
+//å®ç°è‡ªå·±çš„é…ç½®ä¿¡æ¯
+//æœ‰å†™å†…å®¹é»˜è®¤æ˜¯ç©ºçš„ï¼Œä¸èƒ½ç›´æ¥ä½¿ç”¨
 using namespace acl::http_rpc_config;
 
-//×îºóÒ»ĞĞ±ØĞëÊÇNULL,0 ,NULL,0, 0±íÊ¾½áÊø
+//æœ€åä¸€è¡Œå¿…é¡»æ˜¯NULL,0 ,NULL,0, 0è¡¨ç¤ºç»“æŸ
 acl::master_int_tbl acl::http_rpc_config::var_conf_int_tab[] = {
 	{ "var_cfg_redis_conn_timeout",     30, &var_cfg_redis_conn_timeout,     0, 0 },
 	{ "var_cfg_redis_rw_timeout",       30, &var_cfg_redis_rw_timeout,       0, 0 },
@@ -20,7 +20,7 @@ acl::master_int_tbl acl::http_rpc_config::var_conf_int_tab[] = {
 };
 
 
-//×îºóÒ»ĞĞ±ØĞëÊÇNULL,NULL,NULL ±íÊ¾½áÊø
+//æœ€åä¸€è¡Œå¿…é¡»æ˜¯NULL,NULL,NULL è¡¨ç¤ºç»“æŸ
 acl::master_str_tbl acl::http_rpc_config::var_conf_str_tab[] = {
 
 	{ "var_cfg_find_services",   "/nameserver/service_mgr/finds", &var_cfg_find_services },
@@ -28,9 +28,9 @@ acl::master_str_tbl acl::http_rpc_config::var_conf_str_tab[] = {
 	{ "var_cfg_del_service",     "/nameserver/service_mgr/list",  &var_cfg_list_services },
 	{ "var_cfg_add_service",     "/nameserver/service_mgr/add",   &var_cfg_add_service },
 	{ "var_cfg_del_service",     "/nameserver/service_mgr/del",   &var_cfg_del_service },
-	{ "var_cfg_nameserver",      "nameserver",		      &var_cfg_nameserver },
+	{ "var_cfg_nameserver",      "nameserver",		              &var_cfg_nameserver },
 	{ "var_cfg_nameserver_addr", "127.0.0.1:10080",               &var_cfg_nameserver_addr },
-	{ "var_cfg_allow_clients",   "all",                           &var_cfg_allow_clients },
+	{ "var_cfg_allow_clients",   "127.0.0.1:255.255.255:255",     &var_cfg_allow_clients },
 	{ "var_cfg_redis_addr",	     "",                              &var_cfg_redis_addr },
 	{ "var_cfg_memcache_addr",   "127.0.0.1:11211",               &var_cfg_memcache_addr },
 	{ "var_cfg_server_addr",     "127.0.0.1:10081",               &var_cfg_server_addr },
@@ -38,13 +38,13 @@ acl::master_str_tbl acl::http_rpc_config::var_conf_str_tab[] = {
 	{ NULL,                      NULL,                            NULL }
 };
 
-//×îºóÒ»ĞĞ±ØĞëÊÇ0,0,0,0,0±íÊ¾½áÊø
+//æœ€åä¸€è¡Œå¿…é¡»æ˜¯0,0,0,0,0è¡¨ç¤ºç»“æŸ
 acl::master_int64_tbl acl::http_rpc_config::var_conf_int64_tab[] = {
 
 	{ 0, 0 , 0 , 0, 0 }
 };
 
-//×îºóÒ»ĞĞ±ØĞëÊÇ0,0,0±íÊ¾½áÊø
+//æœ€åä¸€è¡Œå¿…é¡»æ˜¯0,0,0è¡¨ç¤ºç»“æŸ
 acl::master_bool_tbl acl::http_rpc_config::var_conf_bool_tab[] = {
 	{ "var_cfg_sync_del_service_addr", 1, &var_cfg_sync_del_service_addr },
 	{ 0, 0 , 0 }

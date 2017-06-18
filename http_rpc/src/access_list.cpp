@@ -29,6 +29,7 @@ void access_list::set_allow_clients(const char* iplist)
 {
 	if (strcasecmp(iplist, "all") == 0)
 	{
+		logger("set allow clients to all");
 		const char* from = "0.0.0.0", *to = "255.255.255.255";
 
 		if (acl_iplink_insert(allow_clients_, from, to) == NULL)

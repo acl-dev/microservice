@@ -35,7 +35,7 @@ private:
 	{
 		//interface name
 		acl::string name_;
-		//ÍêÕûµÄÂ·¾¶/server/module/interface
+		//å®Œæ•´çš„è·¯å¾„/server/module/interface
 		acl::string service_path_;
 		//addr: addr_info
 		std::map<acl::string, addr_info> addrs_;
