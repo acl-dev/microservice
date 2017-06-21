@@ -5,7 +5,8 @@ namespace acl
 
 
 	http_rpc_server::http_rpc_server()
-	{
+	    :redis_cluster_cli_(NULL)
+    {
 		set_cfg_int(http_rpc_config::var_conf_int_tab);
 		set_cfg_int64(http_rpc_config::var_conf_int64_tab);
 		set_cfg_str(http_rpc_config::var_conf_str_tab);
