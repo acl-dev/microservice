@@ -82,21 +82,10 @@ namespace acl
         http_rpc_servlet *servlet =
                 static_cast<http_rpc_servlet*>(stream->get_ctx());
 
-        const char* peer = stream->get_peer(false);
-
-		/**
-		 * servlet maybe null. if in function thread_on_accept
-		 * do access_list() false. and stream has create http_rpc_servlet
-		 */
-		if(servlet == NULL)
-			return;
-
 		session *sess = &servlet->getSession();
 
         delete servlet;
-        if(sess != NULL)
-            delete sess;
-
+        delete sess;
 	}
 
 	bool http_rpc_server::thread_on_timeout(socket_stream* stream)
@@ -106,28 +95,11 @@ namespace acl
 
 	bool http_rpc_server::thread_on_accept(socket_stream* stream)
 	{
-		const char* peer = stream->get_peer(false);
 
-		if (peer == NULL || *peer == 0)
-		{
-			logger_warn("invalid client peer: %s"
-				, peer ? peer : "null");
-			return false;
-		}
-
-//		if (access_list::get_instance().check_client(peer) == false)
-//		{
-//			logger_warn("denied from server ip: %s", peer);
-//			return false;
-//		}
-
-		//rpc 读写超时时间
 		stream->set_rw_timeout(http_rpc_config::var_cfg_rw_timeout);
-
-		http_rpc_servlet *servlet = new http_rpc_servlet;
-
+        session *sess = create_session();
+		http_rpc_servlet *servlet = new http_rpc_servlet(stream, sess);
 		stream->set_ctx(servlet);
-
 		return true;
 	}
 
@@ -135,11 +107,7 @@ namespace acl
 	{
         //logger("stream to read");
 		http_rpc_servlet *servlet = (http_rpc_servlet *)stream->get_ctx();
-		if (servlet == NULL)
-			logger_fatal("servlet null!");
-
-		session *sess = create_session();
-		return servlet->doRun(*sess, stream);
+		return servlet->doRun();
 	}
 
 

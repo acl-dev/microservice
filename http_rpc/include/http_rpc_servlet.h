@@ -4,7 +4,7 @@ namespace acl
 	class http_rpc_servlet: public HttpServlet
 	{
 	public:
-		http_rpc_servlet();
+		http_rpc_servlet(socket_stream* stream, session* session);
 
 		HttpServletRequest *get_httpServletRequest();
 
