@@ -3,9 +3,10 @@
 namespace acl
 {
 
-	http_rpc_servlet::http_rpc_servlet()
-		:req_(NULL),
-		resp_(NULL)
+	http_rpc_servlet::http_rpc_servlet(socket_stream* stream, session* session)
+		: HttpServlet(stream, session),
+          req_(NULL),
+          resp_(NULL)
 	{
 	}
 
